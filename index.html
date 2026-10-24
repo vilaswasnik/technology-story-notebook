@@ -1,0 +1,651 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>My Technology Story Notebook</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        font-family: "Segoe UI", sans-serif;
+        background: #171413;
+        color: #eee7df;
+        font-synthesis: none;
+        text-rendering: optimizeLegibility;
+        --muted: #b4a69a;
+        --line: #39312d;
+        --panel: #201b19;
+        --accent: #a8cabe;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        min-width: 320px;
+        min-height: 100vh;
+        margin: 0;
+      }
+
+      button,
+      input,
+      textarea {
+        font: inherit;
+      }
+
+      .page-header {
+        border-bottom: 1px solid var(--line);
+        background: #1b1819;
+      }
+
+      .header-inner,
+      .workspace {
+        width: min(1100px, calc(100% - 48px));
+        margin: 0 auto;
+      }
+
+      .header-inner {
+        position: relative;
+        padding: 36px 0 34px;
+      }
+
+      .eyebrow,
+      .section-label {
+        color: var(--muted);
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+      }
+
+      h1,
+      h2 {
+        font-family: Georgia, "Times New Roman", serif;
+        font-weight: 400;
+      }
+
+      h1 {
+        margin: 12px 0 5px;
+        font-size: clamp(30px, 4vw, 42px);
+        letter-spacing: -1px;
+      }
+
+      .tagline {
+        margin: 0;
+        color: var(--muted);
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 14px;
+        font-style: italic;
+      }
+
+      .profile-mark {
+        position: absolute;
+        top: 42px;
+        right: 12px;
+        display: grid;
+        width: 38px;
+        height: 38px;
+        place-items: center;
+        border: 1px solid var(--line);
+        border-radius: 50%;
+        color: #e8d7bd;
+        font-family: Georgia, "Times New Roman", serif;
+      }
+
+      .workspace {
+        display: grid;
+        grid-template-columns: 194px minmax(0, 1fr);
+        gap: 32px;
+        padding-top: 32px;
+        padding-bottom: 40px;
+      }
+
+      .sidebar-heading {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin: 2px 0 13px;
+      }
+
+      .technology-count {
+        color: var(--muted);
+        font-size: 11px;
+      }
+
+      .technology-list {
+        display: grid;
+        gap: 5px;
+      }
+
+      .technology-item {
+        display: flex;
+        min-height: 39px;
+        align-items: center;
+        gap: 10px;
+        padding: 0 10px;
+        border: 1px solid transparent;
+        border-radius: 10px;
+        background: #211c1a;
+        color: #eee7df;
+        cursor: grab;
+        text-align: left;
+        transition: background 120ms ease, color 120ms ease;
+      }
+
+      .technology-item:active {
+        cursor: grabbing;
+      }
+
+      .technology-item[aria-current="true"] {
+        background: var(--accent);
+        color: #17201d;
+      }
+
+      .technology-item.dragging {
+        opacity: 0.4;
+      }
+
+      .drag-grip {
+        color: #877a70;
+        font-size: 12px;
+        letter-spacing: -3px;
+        user-select: none;
+      }
+
+      .technology-item[aria-current="true"] .drag-grip {
+        color: #435b53;
+      }
+
+      .technology-name {
+        flex: 1;
+        overflow: hidden;
+        font-size: 12px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .word-total {
+        color: var(--muted);
+        font-size: 10px;
+      }
+
+      .technology-item[aria-current="true"] .word-total {
+        color: #435b53;
+      }
+
+      .add-technology {
+        display: flex;
+        gap: 6px;
+        margin-top: 12px;
+      }
+
+      .add-technology input {
+        min-width: 0;
+        width: 100%;
+        padding: 8px 10px;
+        border: 1px solid var(--line);
+        border-radius: 9px;
+        outline: none;
+        background: var(--panel);
+        color: #eee7df;
+        font-size: 12px;
+      }
+
+      input:focus,
+      textarea:focus {
+        border-color: #798f85;
+      }
+
+      .icon-button,
+      .save-button {
+        border: 0;
+        border-radius: 10px;
+        background: #393330;
+        color: #eee7df;
+        cursor: pointer;
+      }
+
+      .icon-button {
+        flex: 0 0 38px;
+        font-size: 20px;
+      }
+
+      .icon-button:hover,
+      .save-button:hover {
+        filter: brightness(1.12);
+      }
+
+      .editor-card {
+        display: flex;
+        min-height: min(590px, calc(100vh - 220px));
+        flex-direction: column;
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 15px;
+        background: var(--panel);
+      }
+
+      .editor-heading {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 17px 24px 15px;
+        border-bottom: 1px solid #302a27;
+      }
+
+      h2 {
+        margin: 0;
+        font-size: 21px;
+      }
+
+      .editor-hint {
+        margin: 4px 0 0;
+        color: var(--muted);
+        font-size: 11px;
+      }
+
+      .save-status {
+        padding-top: 4px;
+        color: #c3ad83;
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+      }
+
+      .save-status.unsaved {
+        color: #e2a676;
+      }
+
+      .story-editor {
+        flex: 1;
+        width: 100%;
+        min-height: 300px;
+        resize: none;
+        padding: 20px 24px;
+        border: 0;
+        outline: none;
+        background: transparent;
+        color: #eee7df;
+        font-size: 14px;
+        line-height: 1.7;
+      }
+
+      .editor-footer {
+        display: flex;
+        min-height: 56px;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 10px 24px;
+        border-top: 1px solid #302a27;
+      }
+
+      .word-count {
+        color: var(--muted);
+        font-size: 11px;
+      }
+
+      .save-button {
+        min-width: 96px;
+        padding: 8px 17px;
+        border-radius: 20px;
+        background: #71877e;
+        color: #18201d;
+        font-size: 11px;
+        font-weight: 600;
+      }
+
+      .notice {
+        position: fixed;
+        right: 20px;
+        bottom: 20px;
+        max-width: min(420px, calc(100vw - 40px));
+        padding: 12px 16px;
+        border: 1px solid #715248;
+        border-radius: 10px;
+        background: #2c211f;
+        color: #f1d2c1;
+        font-size: 13px;
+      }
+
+      .notice[hidden] {
+        display: none;
+      }
+
+      @media (max-width: 650px) {
+        .header-inner,
+        .workspace {
+          width: min(100% - 32px, 520px);
+        }
+
+        .header-inner {
+          padding: 28px 0 25px;
+        }
+
+        .profile-mark {
+          top: 28px;
+          right: 0;
+        }
+
+        .workspace {
+          grid-template-columns: 1fr;
+          gap: 20px;
+          padding-top: 20px;
+        }
+
+        .technology-list {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .editor-card {
+          min-height: 55vh;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="page-header">
+      <div class="header-inner">
+        <div class="eyebrow">A private notebook</div>
+        <h1>My Technology Story Notebook</h1>
+        <p class="tagline">Write what you know. Reflect, revise, and prepare.</p>
+        <div class="profile-mark" aria-hidden="true">T</div>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <aside aria-label="Technology stories">
+        <div class="sidebar-heading">
+          <span class="section-label">Technologies</span>
+          <span id="technology-count" class="technology-count"></span>
+        </div>
+        <div id="technology-list" class="technology-list"></div>
+        <form id="add-technology" class="add-technology">
+          <input
+            id="new-technology"
+            type="text"
+            maxlength="48"
+            placeholder="Add a technology"
+            aria-label="New technology name"
+          >
+          <button class="icon-button" type="submit" aria-label="Add technology">+</button>
+        </form>
+      </aside>
+
+      <section class="editor-card" aria-label="Story editor">
+        <div class="editor-heading">
+          <div>
+            <h2 id="story-title">Write your technology story</h2>
+            <p class="editor-hint">What you know, in your own words.</p>
+          </div>
+          <span id="save-status" class="save-status" aria-live="polite">Saved</span>
+        </div>
+        <textarea
+          id="story-editor"
+          class="story-editor"
+          placeholder="Start writing your story..."
+          aria-label="Technology story"
+          disabled
+        ></textarea>
+        <footer class="editor-footer">
+          <span id="word-count" class="word-count">Words: 0</span>
+          <button id="save-story" class="save-button" type="button">Save story</button>
+        </footer>
+      </section>
+    </main>
+
+    <div id="notice" class="notice" role="alert" hidden></div>
+
+    <script>
+      (() => {
+        const STORAGE_KEY = "technology-story-notebook.v1";
+        const DEFAULT_TECHNOLOGIES = ["Linux", "Ansible", "Kubernetes", "Python"];
+        const list = document.querySelector("#technology-list");
+        const editor = document.querySelector("#story-editor");
+        const title = document.querySelector("#story-title");
+        const wordCount = document.querySelector("#word-count");
+        const saveStatus = document.querySelector("#save-status");
+        const notice = document.querySelector("#notice");
+        const state = { technologies: [...DEFAULT_TECHNOLOGIES], stories: {} };
+        const drafts = new Map();
+        const dirtyTechnologies = new Set();
+        let activeTechnology = null;
+        let draggedItem = null;
+        let noticeTimer = null;
+
+        function showNotice(message) {
+          notice.textContent = message;
+          notice.hidden = false;
+          window.clearTimeout(noticeTimer);
+          noticeTimer = window.setTimeout(() => {
+            notice.hidden = true;
+          }, 5000);
+        }
+
+        function loadState() {
+          try {
+            const rawState = window.localStorage.getItem(STORAGE_KEY);
+            if (rawState === null) return;
+
+            const stored = JSON.parse(rawState);
+            if (
+              !stored ||
+              !Array.isArray(stored.technologies) ||
+              !stored.technologies.every(
+                (technology) => typeof technology === "string" && technology.trim()
+              ) ||
+              !stored.stories ||
+              typeof stored.stories !== "object" ||
+              Array.isArray(stored.stories)
+            ) {
+              throw new Error("Saved notebook data has an invalid format.");
+            }
+
+            const seen = new Set();
+            state.technologies = stored.technologies.filter((technology) => {
+              const normalized = technology.trim();
+              const key = normalized.toLocaleLowerCase();
+              if (seen.has(key)) return false;
+              seen.add(key);
+              return true;
+            });
+            for (const technology of DEFAULT_TECHNOLOGIES) {
+              if (!seen.has(technology.toLocaleLowerCase())) {
+                state.technologies.push(technology);
+              }
+            }
+            state.stories = Object.fromEntries(
+              Object.entries(stored.stories).filter(
+                ([, story]) => typeof story === "string"
+              )
+            );
+          } catch (error) {
+            showNotice(`Could not load saved notebook data: ${error.message}`);
+          }
+        }
+
+        function persistState() {
+          try {
+            window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+            return true;
+          } catch (error) {
+            showNotice(`Could not save notebook data: ${error.message}`);
+            return false;
+          }
+        }
+
+        function countWords(text) {
+          return text.trim() ? text.trim().split(/\s+/).length : 0;
+        }
+
+        function updateWordCount() {
+          const count = countWords(editor.value);
+          wordCount.textContent = `Words: ${count}`;
+          const activeItem = list.querySelector(
+            `[data-technology="${CSS.escape(activeTechnology || "")}"] .word-total`
+          );
+          if (activeItem) activeItem.textContent = count;
+        }
+
+        function renderTechnologies() {
+          list.replaceChildren();
+          document.querySelector("#technology-count").textContent =
+            state.technologies.length;
+
+          for (const technology of state.technologies) {
+            const item = document.createElement("button");
+            item.type = "button";
+            item.className = "technology-item";
+            item.draggable = true;
+            item.dataset.technology = technology;
+            item.setAttribute(
+              "aria-current",
+              technology === activeTechnology ? "true" : "false"
+            );
+            item.setAttribute("aria-label", `${technology}; drag to reorder`);
+
+            const grip = document.createElement("span");
+            grip.className = "drag-grip";
+            grip.setAttribute("aria-hidden", "true");
+            grip.textContent = "⠿";
+
+            const name = document.createElement("span");
+            name.className = "technology-name";
+            name.textContent = technology;
+
+            const words = document.createElement("span");
+            words.className = "word-total";
+            words.textContent = countWords(state.stories[technology] || "");
+
+            item.append(grip, name, words);
+            item.addEventListener("click", () => selectTechnology(technology));
+            item.addEventListener("dragstart", (event) => {
+              draggedItem = item;
+              item.classList.add("dragging");
+              event.dataTransfer.effectAllowed = "move";
+              event.dataTransfer.setData("text/plain", technology);
+            });
+            item.addEventListener("dragend", () => {
+              item.classList.remove("dragging");
+              draggedItem = null;
+              saveOrder();
+            });
+            item.addEventListener("dragover", (event) => {
+              event.preventDefault();
+              if (!draggedItem || draggedItem === item) return;
+
+              const bounds = item.getBoundingClientRect();
+              const insertAfter = event.clientY > bounds.top + bounds.height / 2;
+              list.insertBefore(
+                draggedItem,
+                insertAfter ? item.nextSibling : item
+              );
+            });
+            list.append(item);
+          }
+        }
+
+        function saveOrder() {
+          const newOrder = Array.from(list.children, (item) => item.dataset.technology);
+          if (newOrder.length !== state.technologies.length) return;
+          state.technologies = newOrder;
+          persistState();
+        }
+
+        function selectTechnology(technology) {
+          if (activeTechnology !== null) {
+            drafts.set(activeTechnology, editor.value);
+          }
+
+          activeTechnology = technology;
+          const story = drafts.has(technology)
+            ? drafts.get(technology)
+            : state.stories[technology] || "";
+          editor.value = story;
+          editor.disabled = false;
+          title.textContent = `My ${technology} story`;
+          saveStatus.textContent = dirtyTechnologies.has(technology) ? "Unsaved" : "Saved";
+          saveStatus.classList.toggle("unsaved", dirtyTechnologies.has(technology));
+          renderTechnologies();
+          updateWordCount();
+          editor.focus();
+        }
+
+        editor.addEventListener("input", () => {
+          drafts.set(activeTechnology, editor.value);
+          if (editor.value === (state.stories[activeTechnology] || "")) {
+            dirtyTechnologies.delete(activeTechnology);
+          } else {
+            dirtyTechnologies.add(activeTechnology);
+          }
+          saveStatus.textContent = dirtyTechnologies.has(activeTechnology)
+            ? "Unsaved"
+            : "Saved";
+          saveStatus.classList.toggle(
+            "unsaved",
+            dirtyTechnologies.has(activeTechnology)
+          );
+          updateWordCount();
+        });
+
+        document.querySelector("#save-story").addEventListener("click", () => {
+          if (activeTechnology === null) return;
+          state.stories[activeTechnology] = editor.value;
+          if (!persistState()) return;
+          drafts.delete(activeTechnology);
+          dirtyTechnologies.delete(activeTechnology);
+          saveStatus.textContent = "Saved";
+          saveStatus.classList.remove("unsaved");
+          renderTechnologies();
+          updateWordCount();
+          showNotice(`${activeTechnology} story saved.`);
+        });
+
+        document.querySelector("#add-technology").addEventListener("submit", (event) => {
+          event.preventDefault();
+          const input = document.querySelector("#new-technology");
+          const technology = input.value.trim();
+          if (!technology) {
+            input.focus();
+            return;
+          }
+
+          if (
+            state.technologies.some(
+              (existing) => existing.toLocaleLowerCase() === technology.toLocaleLowerCase()
+            )
+          ) {
+            showNotice(`${technology} is already in your notebook.`);
+            input.select();
+            return;
+          }
+
+          state.technologies.push(technology);
+          if (!persistState()) {
+            state.technologies.pop();
+            return;
+          }
+          input.value = "";
+          renderTechnologies();
+          selectTechnology(technology);
+        });
+
+        window.addEventListener("beforeunload", (event) => {
+          if (dirtyTechnologies.size > 0) {
+            event.preventDefault();
+            event.returnValue = "";
+          }
+        });
+
+        loadState();
+        renderTechnologies();
+        if (state.technologies.length > 0) {
+          selectTechnology(state.technologies[0]);
+        }
+      })();
+    </script>
+  </body>
+</html>
